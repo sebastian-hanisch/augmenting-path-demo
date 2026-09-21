@@ -195,15 +195,15 @@ def _render(k):
         if k < n_rounds:
             rnd = res.rounds[k]
             c1.markdown(f"**Vor Runde {k + 1}** - der Weg: {rnd.length} Kanten")
-            c1.plotly_chart(build_state_map(sc, pairs_k, rnd.path), width="stretch", key="map_before")
+            c1.plotly_chart(build_state_map(sc, pairs_k, rnd.path), width="stretch", key=f"map_before_{k}")
             c2.markdown(f"**Nach Runde {k + 1}** - {rnd.pairs_after} Paare")
-            c2.plotly_chart(build_state_map(sc, res.states[k + 1]), width="stretch", key="map_after")
+            c2.plotly_chart(build_state_map(sc, res.states[k + 1]), width="stretch", key=f"map_after_{k}")
             st.caption(f"Weg dieser Runde: {_path_text(rnd.path)} (+ wird gewählt, − wird freigegeben). Die Suche hat dafür {rnd.scanned} Kanten durchsucht.")
         else:
             c1.markdown(f"**Ergebnis** - {res.count} Paare, {res.cost} Minuten")
-            c1.plotly_chart(build_state_map(sc, pairs_k), width="stretch", key="map_result")
+            c1.plotly_chart(build_state_map(sc, pairs_k), width="stretch", key=f"map_result_{k}")
             c2.markdown(f"**Beweis:** {len(res.cover_v) + len(res.cover_o)} Ecken überdecken alle möglichen Paare")
-            c2.plotly_chart(build_cover_map(sc, res.pairs, res.cover_v, res.cover_o), width="stretch", key="map_proof")
+            c2.plotly_chart(build_cover_map(sc, res.pairs, res.cover_v, res.cover_o), width="stretch", key=f"map_proof_{k}")
             st.caption(f"Die letzte Suche ({res.final_scanned} durchsuchte Kanten) findet keinen Verbesserungsweg. Die violetten Ecken - {len(res.cover_v)} Fahrzeuge und {len(res.cover_o)} Aufträge - berühren jede mögliche Kante (blasse Linien); "
                        f"da es genau so viele Ecken wie Paare ({res.count}) sind, kann kein Matching mehr Paare haben.")
 

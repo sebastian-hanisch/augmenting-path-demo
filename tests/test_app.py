@@ -209,8 +209,8 @@ def _calls(src, name):
 
 def test_every_plotly_chart_has_an_explicit_key_and_axes_are_locked():
     calls = _calls(APP.read_text(encoding="utf-8"), "plotly_chart")
-    assert len(calls) == 9 and all(re.search(r'key="[a-z_]+"', c) for c in calls), calls
-    assert len({re.search(r'key="([a-z_]+)"', c).group(1) for c in calls}) == 9            # jeder Schlüssel nur einmal
+    assert len(calls) == 9 and all(re.search(r'key=f?"[a-z_]+(_\{\w+\})?"', c) for c in calls), calls
+    assert len({re.search(r'key=f?"([a-z_]+?)(?:_\{\w+\})?"', c).group(1) for c in calls}) == 9            # jeder Schlüssel nur einmal
     viz = (ROOT / "ap_visualization.py").read_text(encoding="utf-8")
     bodies = [b for b in viz.split(chr(10) + "def ") if b.startswith("build_")]
     assert "fixedrange=True" in viz and len(bodies) == 7 and all("_base(" in b or "_map_layout(" in b for b in bodies)
@@ -231,3 +231,11 @@ def test_runtime_needs_only_numpy_pandas_plotly_streamlit():
     assert "scipy" not in req and "networkx" not in req
     for path in ROOT.glob("*.py"):
         assert not re.search(r"^\s*(import|from)\s+(scipy|networkx)\b", path.read_text(encoding="utf-8"), re.M), path.name
+
+
+def test_play_runs_through_all_frames_without_duplicate_chart_keys():
+    """Beim Abspielen entstehen in einem Lauf mehrere Diagramme mit demselben Namen - die Schlüssel tragen deshalb den Schritt (Regression: StreamlitDuplicateElementKey bei mehr als einem Bild)."""
+    at = _run()
+    [b for b in at.button if b.label == "▶️ Abspielen"][0].click()
+    at.run()
+    assert not at.exception, [e.value for e in at.exception]
