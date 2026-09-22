@@ -1,5 +1,7 @@
 # Augmentierende Pfade – eine Zuordnung darf wieder freigegeben werden – Streamlit-Demo
 
+**[→ Demo live ausprobieren](https://sebastianhanisch-augmenting-path-demo.streamlit.app/)**
+
 Zweites Stück der **Matching-Linie** der "Konzepte"-Reihe für die Website "Sebastian Hanisch – Operations Research und Machine Learning", Fortsetzung der [Greedy-Matching-Demo](https://github.com/sebastian-hanisch/greedy-matching-demo):
 anders als die Fall-Demos im Portfolio (ein Anwendungsfall, mehrere Verfahren im Vergleich) zeigt diese Demo **ein** Verfahren – **augmentierende Pfade** (Verbesserungswege im bipartiten Matching) – an einem wachsenden Beispiel.
 Greedy legt Zuordnungen fest und nimmt sie nie zurück und verliert deshalb Paare. Ein **Verbesserungsweg** beginnt an einem freien Fahrzeug, geht abwechselnd über nicht gewählte und gewählte Kanten und endet an einem freien Auftrag;
