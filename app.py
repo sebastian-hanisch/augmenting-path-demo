@@ -87,7 +87,7 @@ Der Haken: die Suche **zählt Paare, nicht Kosten**. Diese Demo zeigt beides - d
 )
 st.caption(
     "Anders als die Fall-Demos im Portfolio, die an einem Anwendungsfall mehrere Verfahren vergleichen, zeigt diese Demo - zweites Stück der Matching-Linie der \"Konzepte\"-Reihe, Fortsetzung der Greedy-Matching-Demo - **ein** Verfahren an einem wachsenden Beispiel. "
-    "Die Schwächen dieses Stücks sind die Ansatzpunkte der nächsten: **Ungarische Methode** (die Kosten entscheiden, welche Kanten weichen), **Hopcroft–Karp** (viele kürzeste Wege je Suche) und **Blossom** (auch Paare innerhalb einer Gruppe) - noch nicht gebaut. "
+    "Die Schwächen dieses Stücks sind die Ansatzpunkte der nächsten: **Ungarische Methode** (die Kosten entscheiden, welche Kanten weichen), **Hopcroft–Karp** (viele kürzeste Wege je Suche) und **Blossom** (auch Paare innerhalb einer Gruppe) - alle inzwischen gebaut. "
     "Das Optimum in dieser Demo kommt aus der kleinen exakten Referenz der Greedy-Matching-Demo, die hier nur zum Messen dient."
 )
 
@@ -341,7 +341,7 @@ st.markdown(
 | **Niemand hat Wünsche** | Fahrzeuge und Aufträge haben keine Vorlieben; sobald sie welche haben, ist nicht mehr die Paarzahl das Ziel, sondern dass niemand abwandern möchte. | **Gale–Shapley**: stabile Paarungen |
 """
 )
-st.caption("Die Nachbarn der Matching-Linie (noch nicht gebaut): Hopcroft–Karp, Ungarische Methode, Auktionsalgorithmus, Blossom, Gewichteter Blossom, Gale–Shapley, Stabile Mitbewohner und Online-Matching. Bereits gebaut: die Wurzel, die Greedy-Matching-Demo.")
+st.caption("Die Matching-Linie ist inzwischen vollständig gebaut (13 Stücke): die Wurzel (Greedy-Matching), Hopcroft–Karp, Ungarische Methode, Auktionsalgorithmus, Blossom, Gewichteter Blossom, Gale–Shapley, Stabile Mitbewohner, Krankenhaus-Zulassung, Top Trading Cycles, Nierentausch und Online-Matching.")
 
 st.markdown("---")
 
