@@ -20,6 +20,7 @@ from ap_presets import (
     init_session_state_defaults,
     load_permalink_settings,
     randomize_seed,
+    seed_widget,
     sync_query_params,
 )
 from ap_scenario import build
@@ -135,17 +136,22 @@ with st.sidebar:
              "die Kosten liegen im Median 27 % gegen 8 % über dem Optimum.",
     )
     if net_key == "random":
+        seed_widget("n_slider")
         n = st.slider("Fahrzeuge", *bounds("n_slider"), key="n_slider", help="Anzahl der Fahrzeuge.")
         st.session_state[KEPT["n_slider"]] = n
+        seed_widget("m_slider")
         m = st.slider("Aufträge", *bounds("m_slider"), key="m_slider", help="Anzahl der Aufträge.")
         st.session_state[KEPT["m_slider"]] = m
+        seed_widget("reach_slider")
         reach = st.slider(
             "Reichweite [min]", *bounds("reach_slider"), key="reach_slider", step=5,
             help="Wie weit ein Fahrzeug höchstens fahren darf. Bei 10 hat Greedy auf 80 von 100 Karten schon die größtmögliche Paarzahl, bei 40 fehlen im Mittel 2,7 Paare, bei 150 keins - dafür bleibt die Kostenlücke von 14 %.",
         )
         st.session_state[KEPT["reach_slider"]] = reach
+        seed_widget("ballung_slider")
         ballung = st.slider("Ballung [%]", *bounds("ballung_slider"), key="ballung_slider", step=25, help="0 = Fahrzeuge und Aufträge gleichmäßig verteilt, 100 = alle um drei Stadtteile gruppiert.")
         st.session_state[KEPT["ballung_slider"]] = ballung
+        seed_widget("seed_input")
         seed = st.number_input("Zufalls-Seed", *bounds("seed_input"), key="seed_input", step=1)
         st.session_state[KEPT["seed_input"]] = seed
         st.button("🎲 Neue Karte generieren", width="stretch", on_click=randomize_seed, help="Würfelt einen neuen Zufalls-Seed. Die Verteilung über 100 feste Karten weiter unten ändert sich dabei nicht - nur die Marke „Ihre Ziehung“ wandert.")
