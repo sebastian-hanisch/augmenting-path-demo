@@ -95,9 +95,11 @@ st.caption(
 with st.expander("So funktionieren augmentierende Pfade", expanded=True):
     st.markdown(
         """
+**Der Graph.** Fahrzeuge und Aufträge sind die **Ecken**, ein mögliches Paar (das Fahrzeug erreicht den Auftrag in der Reichweite) ist eine **Kante**. Es gibt **zwei Seiten**: Kanten laufen immer von einem Fahrzeug zu einem Auftrag, nie von Fahrzeug zu Fahrzeug oder von Auftrag zu Auftrag. Einen solchen Graphen nennt man **bipartit**. Auf der Karte liegen beide Seiten gemischt; unter **Darstellung → Zwei Seiten** stehen die Fahrzeuge links und die Aufträge rechts, und man sieht, dass jede Kante die Seite wechselt.
+
 1. **Wechselweg:** Start an einem *freien* Fahrzeug; abwechselnd eine *nicht gewählte* Kante (Fahrzeug → Auftrag) und eine *gewählte* Kante (Auftrag → sein Fahrzeug). Ein **Verbesserungsweg** endet an einem *freien* Auftrag - er hat immer eine nicht gewählte Kante mehr als gewählte.
 2. **Umklappen:** die nicht gewählten Kanten des Wegs werden gewählt, die gewählten freigegeben. Jedes Fahrzeug und jeder Auftrag auf dem Weg hat danach wieder genau einen Partner, nur die beiden Enden sind neu dazugekommen: **ein Paar mehr**.
-3. **Berge:** ein Matching ist genau dann größtmöglich, wenn es **keinen** Verbesserungsweg gibt. Man sucht also, klappt um und sucht wieder - bis die Suche scheitert.
+3. **Satz von Berge:** ein Matching ist genau dann größtmöglich, wenn es **keinen** Verbesserungsweg gibt. Man sucht also, klappt um und sucht wieder - bis die Suche scheitert.
 4. **Wegesuche:** die **Breitensuche** startet von allen freien Fahrzeugen gleichzeitig und findet einen *kürzesten* Weg; die **Tiefensuche** (Kuhn) versucht es von einem freien Fahrzeug nach dem anderen und findet irgendeinen, oft sehr langen Weg. Beide finden immer dieselbe Paarzahl.
 5. **Beweis:** die erfolglose Suche liefert eine Menge von Ecken (die *Überdeckung*), die jede mögliche Kante berührt und genau so viele Ecken hat wie das Matching Paare - mehr Paare kann es dann nicht geben.
         """
@@ -181,15 +183,19 @@ st.markdown("## 🎯 Verbesserungswege in Aktion")
 if st.session_state.get("ap_step_owner") != (params, start, search):
     st.session_state["ap_step"] = n_rounds
     st.session_state["ap_step_owner"] = (params, start, search)
-step_col, play_col = st.columns([5, 2])
+step_col, layout_col, play_col = st.columns([4, 3, 2])
 with step_col:
     if n_rounds > 0:
         step = st.slider("Runde", 0, n_rounds, key="ap_step", help="Wie viele Verbesserungswege schon umgeklappt sind. Bei 0 ist der Start zu sehen, mit dem ersten Weg; ganz rechts das fertige Matching und der Beweis.")
     else:
         step = 0
         st.caption("Hier gibt es keinen Verbesserungsweg: das Start-Matching hat schon die größtmögliche Paarzahl. Rechts der Beweis dafür.")
+with layout_col:
+    layout = st.radio("Darstellung", list(C.LAYOUT_LABELS), key="layout_radio", format_func=lambda k: C.LAYOUT_LABELS[k], horizontal=True,
+                      help="Karte: Fahrzeuge und Aufträge liegen dort, wo sie auf der Karte sind. Zwei Seiten: dieselben Fahrzeuge links, dieselben Aufträge rechts, jede Kante läuft von einer Seite zur anderen - ein bipartiter Graph. Wege und Paare sind in beiden Darstellungen dieselben.")
 with play_col:
     auto_play = st.button("▶️ Abspielen", width="stretch", disabled=n_rounds == 0)
+sync_query_params({"layout_radio": layout})
 view_slot = st.empty()
 
 
@@ -201,15 +207,15 @@ def _render(k):
         if k < n_rounds:
             rnd = res.rounds[k]
             c1.markdown(f"**Vor Runde {k + 1}** - der Weg: {rnd.length} Kanten")
-            c1.plotly_chart(build_state_map(sc, pairs_k, rnd.path), width="stretch", key=f"map_before_{k}")
+            c1.plotly_chart(build_state_map(sc, pairs_k, rnd.path, layout=layout), width="stretch", key=f"map_before_{k}")
             c2.markdown(f"**Nach Runde {k + 1}** - {rnd.pairs_after} Paare")
-            c2.plotly_chart(build_state_map(sc, res.states[k + 1]), width="stretch", key=f"map_after_{k}")
+            c2.plotly_chart(build_state_map(sc, res.states[k + 1], layout=layout), width="stretch", key=f"map_after_{k}")
             st.caption(f"Weg dieser Runde: {_path_text(rnd.path)} (+ wird gewählt, − wird freigegeben). Die Suche hat dafür {rnd.scanned} Kanten durchsucht.")
         else:
             c1.markdown(f"**Ergebnis** - {res.count} Paare, {res.cost} Minuten")
-            c1.plotly_chart(build_state_map(sc, pairs_k), width="stretch", key=f"map_result_{k}")
+            c1.plotly_chart(build_state_map(sc, pairs_k, layout=layout), width="stretch", key=f"map_result_{k}")
             c2.markdown(f"**Beweis:** {len(res.cover_v) + len(res.cover_o)} Ecken überdecken alle möglichen Paare")
-            c2.plotly_chart(build_cover_map(sc, res.pairs, res.cover_v, res.cover_o), width="stretch", key=f"map_proof_{k}")
+            c2.plotly_chart(build_cover_map(sc, res.pairs, res.cover_v, res.cover_o, layout=layout), width="stretch", key=f"map_proof_{k}")
             st.caption(f"Die letzte Suche ({res.final_scanned} durchsuchte Kanten) findet keinen Verbesserungsweg. Die violetten Ecken - {len(res.cover_v)} Fahrzeuge und {len(res.cover_o)} Aufträge - berühren jede mögliche Kante (blasse Linien); "
                        f"da es genau so viele Ecken wie Paare ({res.count}) sind, kann kein Matching mehr Paare haben.")
 
@@ -225,7 +231,7 @@ else:
 counts = [len(s) for s in res.states]
 if n_rounds > 0:
     st.plotly_chart(build_rounds(counts, [r.length for r in res.rounds]), width="stretch", key="rounds_chart")
-st.caption("Quadrate sind Fahrzeuge, Kreise Aufträge; ohne Partner nur als Umriss; blasse Linien sind mögliche Paare, blaue gewählte. Grün: der Weg wählt diese Kante neu, rot gestrichelt: der Weg gibt diese gewählte Kante frei.")
+st.caption("Quadrate sind Fahrzeuge, Kreise Aufträge; ohne Partner nur als Umriss. In der Darstellung „Zwei Seiten“ stehen die Fahrzeuge links und die Aufträge rechts (innerhalb jeder Spalte nach Lage der möglichen Partner geordnet, damit sich wenige Kanten kreuzen); Wege und Paare sind dieselben wie auf der Karte; blasse Linien sind mögliche Paare, blaue gewählte. Grün: der Weg wählt diese Kante neu, rot gestrichelt: der Weg gibt diese gewählte Kante frei.")
 
 st.markdown("---")
 
@@ -342,7 +348,7 @@ st.markdown(
 |---|---|---|
 | **Nur die Paarzahl zählt** | Bei Reichweite 40 ist die Paarzahl auf allen 100 Karten größtmöglich, die Kosten liegen aber im Median 8 % (Start Greedy „Billigste Kante zuerst“) beziehungsweise 36 % (leerer Start) über dem Optimum. Bei allem erreichbar bleibt es bei 14 %: es gibt keinen Weg, der die Kosten anfasst. | **Ungarische Methode**: die Kosten entscheiden, welche gewählten Kanten weichen |
 | **Ein Weg je Suche** | Bei konstantem mittleren Grad wächst die Zahl der durchsuchten Kanten von 20 auf 320 Fahrzeuge auf mehr als das 100-Fache: es gibt mehr Wege, und jede Suche kann fast alle Kanten anfassen. | **Hopcroft–Karp**: viele kürzeste Wege je Suche |
-| **Es gibt zwei getrennte Seiten** | Fahrzeuge und Aufträge bilden zwei Gruppen. Sollen sich Fahrer untereinander paaren (Zweierteams), gibt es Zyklen ungerader Länge, in denen ein alternierender Weg im Kreis läuft und die Suche ihn nicht erkennt. | **Blossom**: allgemeine Graphen |
+| **Der Graph ist bipartit (zwei Seiten)** | Kanten gibt es nur zwischen Fahrzeugen und Aufträgen. Soll dagegen jeder mit jedem gepaart werden können, etwa zwei Fahrer, die gemeinsam eine Fahrt übernehmen, kann es Kreise ungerader Länge geben (drei Fahrer, die einander alle erreichen); ein alternierender Weg läuft dann im Kreis, und die Suche erkennt ihn nicht. | **Blossom**: allgemeine Graphen |
 | **Zusagen dürfen zurückgenommen werden** | Umklappen gibt gewählte Zuordnungen wieder frei. Kommen Aufträge nacheinander und sind Fahrzeuge schon zugesagt, ist das nicht erlaubt. | **Online-Matching**: die Reihenfolge ist Teil des Problems |
 | **Niemand hat Wünsche** | Fahrzeuge und Aufträge haben keine Vorlieben; sobald sie welche haben, ist nicht mehr die Paarzahl das Ziel, sondern dass niemand abwandern möchte. | **Gale–Shapley**: stabile Paarungen |
 """

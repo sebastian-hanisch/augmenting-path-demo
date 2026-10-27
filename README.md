@@ -48,6 +48,7 @@ Vor dem Schreiben der Texte wurde gemessen (400 Karten je Zelle); zwei Vermutung
 - **Verbesserungswege in Aktion:** Schritt-Slider und ▶️ über die Runden: links der Zustand mit dem Weg der nächsten Runde (grün = wird gewählt, rot gestrichelt = wird freigegeben), rechts der Zustand danach; am Ende der **Beweis** – die Knotenüberdeckung, deren Ecken jede mögliche Kante berühren und deren Größe der Paarzahl entspricht.
 - **Paare optimal – und die Kosten?** Ergebnis gegen die exakte Messlatte, Verteilung über 100 feste Karten (Anteile, Median, Histogramme mit der Marke „Ihre Ziehung“ für alle drei Starts), Tabelle der sechs Kombinationen (Wege, Weglängen, durchsuchte Kanten, Mehrkosten), Sweep über die Reichweite.
 - **Aufwand:** wie wächst die Zahl der durchsuchten Kanten mit der Karte (10 bis 320 Fahrzeuge bei konstantem mittleren Grad).
+- **Zwei Darstellungen desselben Graphen:** als Karte oder als **bipartiter Graph** (Fahrzeuge links, Aufträge rechts, jede Kante wechselt die Seite); Wege und Paare sind in beiden dieselben.
 - **Feste Lehrbuchkarten** (2 × 2, Pfad aus vier Punkten, lange Kette) und zufällige Karten; **Wo die Annahmen enden:** welches spätere Stück an welcher Schwäche ansetzt.
 
 Das **Optimum** kommt aus der kleinen exakten Referenz der Greedy-Matching-Demo (kürzeste augmentierende Wege mit Potenzialen auf einer ganzzahligen Matrix), die hier nur zum Messen dient; das Verfahren selbst ist Thema der Ungarischen Methode, eines späteren Stücks.

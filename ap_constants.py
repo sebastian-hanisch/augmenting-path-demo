@@ -16,6 +16,8 @@ START_LABELS = {"empty": "Leer", "edge": "Greedy: billigste Kante zuerst", "orde
 DEFAULT_START = "edge"
 SEARCH_LABELS = {"bfs": "Breitensuche (kürzester Weg)", "dfs": "Tiefensuche (Kuhn)"}
 DEFAULT_SEARCH = "bfs"
+LAYOUT_LABELS = {"map": "Karte", "bipartit": "Zwei Seiten"}
+DEFAULT_LAYOUT = "map"
 
 # --- feste Seed-Mengen (dieselben wie in der Greedy-Matching-Demo; unabhängig vom Nutzer-Seed) --------------------------------------
 DIST_SEEDS = tuple(range(100000, 100100))
@@ -28,7 +30,7 @@ SCALE_REACH_AT_20 = 40
 COLORS = {"matched": "#1f77b4", "add": "#2ca02c", "drop": "#d62728", "common": "#8c8c8c", "vehicle": "#111111", "order": "#ff7f0e", "cover": "#9467bd", "optimal": "#d62728"}
 
 # --- Presets ------------------------------------------------------------------------------------------------------------------
-_BASE = dict(net="random", start=DEFAULT_START, search=DEFAULT_SEARCH, n=DEFAULT_N, m=DEFAULT_M, reach=DEFAULT_REACH, ballung=DEFAULT_BALLUNG, seed=DEFAULT_SEED)
+_BASE = dict(net="random", start=DEFAULT_START, search=DEFAULT_SEARCH, layout=DEFAULT_LAYOUT, n=DEFAULT_N, m=DEFAULT_M, reach=DEFAULT_REACH, ballung=DEFAULT_BALLUNG, seed=DEFAULT_SEED)
 PRESETS = {
     "⚖️ Nichts zu verbessern": {**_BASE, "net": "steal"},
     "🔗 Pfad aus vier Punkten": {**_BASE, "net": "p4"},
